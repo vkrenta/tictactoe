@@ -1,13 +1,15 @@
+let initialArray = [];
+
 const game = {
   //------------------------FIELDS--------------------//
-  width: undefined,
-  height: undefined,
+  width: 0,
+  height: 0,
   dimension: 15,
   cellWidth: 50,
   winCells: 5,
   ctx: undefined,
   player: -1, // -1 is 'x' | 1 is 'o'
-  score: undefined,
+  score: 0,
   sx: 0,
   so: 0,
   sprites: {
@@ -15,23 +17,7 @@ const game = {
     x: undefined,
     o: undefined
   },
-  items: [
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-  ],
+  items: undefined,
   //------------------------INIT----------------------//
   getMousePos(canvas, evt) {
     const rect = canvas.getBoundingClientRect();
@@ -44,6 +30,16 @@ const game = {
   init() {
     const canvas = document.getElementById('mycanvas');
     this.ctx = canvas.getContext('2d');
+
+    for (let i = 0; i < this.dimension; i++) {
+      initialArray.push([]);
+      for (let j = 0; j < this.dimension; j++) {
+        initialArray[i].push(0);
+      }
+    }
+
+    this.items = [];
+    initialArray.map(x => this.items.push([...x]));
 
     canvas.addEventListener(
       'click',
@@ -92,6 +88,10 @@ const game = {
     const diag2Res = this.checkSecondDiagonal();
 
     if (diag2Res) return this.refresh(diag2Res);
+
+    const diag1Res = this.checkFirstDiagonal();
+
+    if (diag1Res) return this.refresh(diag1Res);
   },
 
   refresh(winner) {
@@ -103,23 +103,8 @@ const game = {
       alert('o wins');
       this.so += 1;
     }
-    this.items = [
-      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-    ];
+    this.items = [];
+    initialArray.map(x => this.items.push([...x]));
   },
   //------------------------START---------------------//
   start() {
@@ -210,10 +195,33 @@ const game = {
 
       match = { x: 0, y: 0 };
       for (
-        let j = this.dimension - k - 1, i = this.dimension - 1;
+        let j = this.dimension - k, i = this.dimension - 1;
         j < this.dimension;
         j++, i--
       ) {
+        match = checkMatch(this.items[i][j], match);
+
+        if (match.x >= this.winCells) return -1;
+        if (match.y >= this.winCells) return 1;
+      }
+    }
+  },
+
+  checkFirstDiagonal() {
+    let match = { x: 0, y: 0 };
+
+    for (let k = 0; k <= this.dimension - this.winCells; k++) {
+      match = { x: 0, y: 0 };
+
+      for (let i = k, j = 0; i < this.dimension; i++, j++) {
+        match = checkMatch(this.items[i][j], match);
+
+        if (match.x >= this.winCells) return -1;
+        if (match.y >= this.winCells) return 1;
+      }
+
+      match = { x: 0, y: 0 };
+      for (let j = k + 1, i = 0; j < this.dimension; j++, i++) {
         match = checkMatch(this.items[i][j], match);
 
         if (match.x >= this.winCells) return -1;
