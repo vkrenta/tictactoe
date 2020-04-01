@@ -1,182 +1,241 @@
-var game = {
-	//------------------------FIELDS--------------------//
-	width: 750,
-	height: 750,
-	ctx: undefined,
-	player: -1,
-	score: undefined,
-	sx: 0,
-	so: 0,
-	sprites: {
-		cell: undefined,
-		x: undefined,
-		o: undefined,
-	},
-	items: [[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-			[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-			[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-			[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-			[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-			[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-			[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-			[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-			[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-			[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-			[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-			[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-			[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-			[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-			[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]],
-	//------------------------INIT----------------------//
-	getMousePos(canvas, evt) {
-	    		var rect = canvas.getBoundingClientRect();
-	    		return {
-	        		x: evt.clientX - rect.left,
-	        		y: evt.clientY - rect.top
-	    		};
-	    	},
+const game = {
+  //------------------------FIELDS--------------------//
+  width: undefined,
+  height: undefined,
+  dimension: 15,
+  cellWidth: 50,
+  winCells: 5,
+  ctx: undefined,
+  player: -1, // -1 is 'x' | 1 is 'o'
+  score: undefined,
+  sx: 0,
+  so: 0,
+  sprites: {
+    cell: undefined,
+    x: undefined,
+    o: undefined
+  },
+  items: [
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+  ],
+  //------------------------INIT----------------------//
+  getMousePos(canvas, evt) {
+    const rect = canvas.getBoundingClientRect();
+    return {
+      x: evt.clientX - rect.left,
+      y: evt.clientY - rect.top
+    };
+  },
 
-	init(){
-		var canvas = document.getElementById("mycanvas");
-		this.ctx = canvas.getContext("2d");
+  init() {
+    const canvas = document.getElementById('mycanvas');
+    this.ctx = canvas.getContext('2d');
 
-	
+    canvas.addEventListener(
+      'click',
+      function(evt) {
+        let mousePos = game.getMousePos(canvas, evt);
+        if (
+          game.items[Math.floor(mousePos.y / 50)][
+            Math.floor(mousePos.x / 50)
+          ] === 0
+        ) {
+          game.items[Math.floor(mousePos.y / 50)][Math.floor(mousePos.x / 50)] =
+            game.player;
+          game.player = -game.player;
+        }
+      },
+      false
+    );
 
-    	canvas.addEventListener("click", function (evt) {
-    		var mousePos = game.getMousePos(canvas, evt);
-    		//alert(mousePos.x + ',' + mousePos.y);
-    		if (game.items[Math.floor(mousePos.y/50)][Math.floor(mousePos.x/50)] == 0)
-    		{
-    			game.items[Math.floor(mousePos.y/50)][Math.floor(mousePos.x/50)] = game.player;
-    			game.player = -game.player;
-    		}
-		}, false);
+    this.height = this.cellWidth * this.dimension;
+    this.width = this.cellWidth * this.dimension;
 
-		window.addEventListener("click", function(e){
-			
-		});
+    this.score = document.getElementById('score');
+    this.score.textContent = '';
+  },
 
+  //------------------------LOAD----------------------//
+  load() {
+    for (let key in this.sprites) {
+      this.sprites[key] = new Image();
+      this.sprites[key].src = 'images/' + key + '.png';
+    }
+  },
 
+  //------------------------CREATE--------------------//
+  create() {},
+  //------------------------UPDATE--------------------//
+  update() {
+    const colRes = this.checkColumns();
 
-		this.score = document.getElementById("score");
-		this.score.textContent = "";
-	
-	},
+    if (colRes) return this.refresh(colRes);
 
-	//------------------------LOAD----------------------//
-	load(){
-		for (var key in this.sprites){
-			this.sprites[key] = new Image();
-			this.sprites[key].src = "images/" + key + ".png";
-		};
-	},
+    const rowRes = this.checkRows();
 
-	//------------------------CREATE--------------------//
-	create(){
+    if (rowRes) return this.refresh(rowRes);
 
-	},
-	//------------------------UPDATE--------------------//
-	update(){
-		for (var k = 0; k<15; k++){
-			for (var i = 0; i < 15; i++){
-				if (this.checkRow(this.items, -1, k, i)) {alert("x wins!!!"); this.sx++; this.refresh();}
-				if (this.checkRow(this.items, 1, k, i)) {alert("o wins!!!"); this.so++; this.refresh();}
-			}
+    const diag2Res = this.checkSecondDiagonal();
 
-			for (var j = 0; j < 15; j++){
-				if (this.checkColumn(this.items, -1, k, j)) {alert("x wins!!!"); this.sx++; this.refresh();}
-				if (this.checkColumn(this.items, 1, k, j)) {alert("o wins!!!"); this.so++; this.refresh();}
-			}
-		}
+    if (diag2Res) return this.refresh(diag2Res);
+  },
 
-		for (var i = 0; i < 15; i++)
-			for (var j = 0; j < 15; j++){
-				if (this.checkFirstDiagonal(this.items, -1, i, j)) {alert("x wins!!!"); this.sx++; this.refresh();}
-				if (this.checkFirstDiagonal(this.items, 1, i, j)) {alert("o wins!!!"); this.so++; this.refresh();}
+  refresh(winner) {
+    if (winner === -1) {
+      alert('x wins');
+      this.sx += 1;
+    }
+    if (winner === +1) {
+      alert('o wins');
+      this.so += 1;
+    }
+    this.items = [
+      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+    ];
+  },
+  //------------------------START---------------------//
+  start() {
+    this.init();
+    this.load();
+    this.create();
+    this.run();
+  },
+  //------------------------RENDER--------------------//
+  render() {
+    this.ctx.clearRect(0, 0, this.width, this.height);
+    for (let i = 0; i < this.dimension; i++) {
+      for (let j = 0; j < this.dimension; j++) {
+        this.ctx.drawImage(
+          this.sprites.cell,
+          j * this.cellWidth,
+          i * this.cellWidth
+        );
+        if (game.items[i][j] === -1)
+          this.ctx.drawImage(
+            this.sprites.x,
+            j * this.cellWidth,
+            i * this.cellWidth
+          );
+        if (game.items[i][j] === 1)
+          this.ctx.drawImage(
+            this.sprites.o,
+            j * this.cellWidth,
+            i * this.cellWidth
+          );
+      }
+    }
 
-				if (this.checkSecondDiagonal(this.items, -1, i, j)) {alert("x wins!!!"); this.sx++; this.refresh();}
-				if (this.checkSecondDiagonal(this.items, 1, i, j)) {alert("o wins!!!"); this.so++; this.refresh();}
-			}
+    this.score.textContent = 'x | ' + this.sx + ' : ' + this.so + ' | o';
+  },
 
-	},
+  //------------------------RUN-----------------------//
+  run() {
+    this.update();
+    this.render();
 
-	refresh(){
-		this.items = [[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-					[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-					[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-					[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-					[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-					[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-					[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-					[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-					[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-					[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-					[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-					[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-					[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-					[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-					[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]];
-	},
-	//------------------------START---------------------//
-	start(){
-		this.init();
-		this.load();
-		this.create();
-		this.run();
-	},
-	//------------------------RENDER--------------------//
-	render(){
-		this.ctx.clearRect(0, 0, this.width, this.height);
-		for (var i = 0; i<15; i++){
-			for (var j = 0; j<15; j++){
-				this.ctx.drawImage(this.sprites.cell, j*50, i*50);
-				if (game.items[i][j] == -1) this.ctx.drawImage(this.sprites.x, j*50, i*50);
-				if (game.items[i][j] ==  1) this.ctx.drawImage(this.sprites.o, j*50, i*50);
-			}
-		};
+    window.requestAnimationFrame(function() {
+      game.run();
+    });
+  },
 
-		this.score.textContent = "x | "+this.sx+" : "+this.so+" | o";
-	},
-	
-	//------------------------RUN-----------------------//
-	run(){
-		this.update();
-		this.render();
+  //===========functions-------------------//
 
-		window.requestAnimationFrame(function(){
-			game.run();
-		});
-	},
+  checkRows() {
+    let match = { x: 0, y: 0 };
+    for (let i = 0; i < this.dimension; i++) {
+      match = { x: 0, y: 0 };
+      for (let j = 0; j < this.dimension; j++) {
+        match = checkMatch(this.items[i][j], match);
 
-	//===========functions-------------------//
+        if (match.x >= this.winCells) return -1;
+        if (match.y >= this.winCells) return 1;
+      }
+    }
+    return 0;
+  },
 
-	checkRow(a, p, k, row){
-		var c = 0;
-		for (var j = k, c = 0; j < 15 && a[row][j]==p; j++, c++);
-		return c>=5;
-	},
+  checkColumns() {
+    let match = { x: 0, y: 0 };
+    for (let i = 0; i < this.dimension; i++) {
+      match = { x: 0, y: 0 };
+      for (let j = 0; j < this.dimension; j++) {
+        match = checkMatch(this.items[j][i], match);
 
-	checkColumn(a, p, k, col){
-		var c = 0;
-		for (var i = k, c = 0; i < 15 && a[i][col]==p; i++, c++);
-		return c>=5;
-	},
+        if (match.x >= this.winCells) return -1;
+        if (match.y >= this.winCells) return 1;
+      }
+    }
+    return 0;
+  },
 
-	checkFirstDiagonal(a, p, row, col){
-		var c = 0;
-		for (var i = row, j = col; i < 15 && j < 15 && a[i][j]==p; i++, j++, c++);
-		return c>=5;
-	},
+  checkSecondDiagonal() {
+    let match = { x: 0, y: 0 };
 
-	checkSecondDiagonal(a, p, row, col){
-		var c = 0;
-		for (var i = row, j = col; i >= 0 && j < 15 && a[i][j]==p; i--, j++, c++);
-		return c>=5;
-	},
-	
+    for (let k = this.winCells - 1; k < this.dimension; k++) {
+      match = { x: 0, y: 0 };
 
+      for (let i = k, j = 0; i >= 0; i--, j++) {
+        match = checkMatch(this.items[i][j], match);
+        if (match.x >= this.winCells) return -1;
+        if (match.y >= this.winCells) return 1;
+      }
+
+      match = { x: 0, y: 0 };
+      for (
+        let j = this.dimension - k - 1, i = this.dimension - 1;
+        j < this.dimension;
+        j++, i--
+      ) {
+        match = checkMatch(this.items[i][j], match);
+
+        if (match.x >= this.winCells) return -1;
+        if (match.y >= this.winCells) return 1;
+      }
+    }
+  }
+};
+
+function checkMatch(item, match) {
+  switch (item) {
+    case -1:
+      return { x: match.x + 1, y: 0 };
+    case 1:
+      return { x: 0, y: match.y + 1 };
+    case 0:
+      return { x: 0, y: 0 };
+    default:
+      alert('incorrect value in cell');
+  }
 }
 
-window.addEventListener("load", function(){
-	game.start();
+window.addEventListener('load', function() {
+  game.start();
 });
